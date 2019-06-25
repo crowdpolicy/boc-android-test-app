@@ -16,6 +16,11 @@ import java.util.concurrent.Callable;
 
 import io.reactivex.Single;
 
+
+/**
+ * Service wrapper class that utilizes the BOC SDK SubscriptionService
+ * This class implements the Subscription API calls, wrapping them into RxJava Single objects that will be used for Android Async calls
+ */
 public class BocSubscriptionService {
     private SubscriptionService subService;
     private BocAuthorizationService authService;
@@ -25,6 +30,11 @@ public class BocSubscriptionService {
         authService = new BocAuthorizationService();
     }
 
+    /**
+     * Wrap the createSubscription call into a RxJava Single object
+     * Invokes the respective SDK function and when the Async call is finished returns the response
+     * @return
+     */
     public Single<CreateSubscriptionResponse> createSubscription(){
         return Single.fromCallable(new Callable<CreateSubscriptionResponse>() {
             @Override
@@ -34,6 +44,7 @@ public class BocSubscriptionService {
                 String originUserId = ApiConfiguration.ORIGIN_USER_ID;
                 String tppId = ApiConfiguration.TPP_ID;
 
+                // TODO: Mock data, provide option for user input
                 PaymentView paymentView = new PaymentView();
                 paymentView.setAmount(new BigDecimal(ApiConfiguration.AMOUNT));
                 paymentView.setCurrency(ApiConfiguration.CURRENCY);
@@ -69,6 +80,12 @@ public class BocSubscriptionService {
     }
 
 
+    /**
+     * Wrap the getSubscriptionIdInfo call into a RxJava Single object
+     * Invokes the respective SDK function and when the Async call is finished returns the response
+     * @param subId
+     * @return
+     */
     public Single<List<SubscriptionView>> getSubscriptionIdInfo(final String subId){
         return Single.fromCallable(new Callable<List<SubscriptionView>>() {
             @Override
@@ -83,6 +100,15 @@ public class BocSubscriptionService {
         });
     }
 
+
+    /**
+     * Wrap the patchSubscription call into a RxJava Single object
+     * Invokes the respective SDK function and when the Async call is finished returns the response
+     * @param subscriptionInfo
+     * @param subId
+     * @param accesstoken2
+     * @return
+     */
     public Single<UpdateSubscriptionResponse> patchSubscriptionIdInfo(final List<SubscriptionView> subscriptionInfo,final String subId, final String accesstoken2){
         return Single.fromCallable(new Callable<UpdateSubscriptionResponse>() {
             @Override
