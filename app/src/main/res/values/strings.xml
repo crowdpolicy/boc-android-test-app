@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">BoC Android Client</string>
+    <string name="domain">bocandroid.com</string>
+    <string name="title_activity_account">AccountActivity</string>
+    <string name="title_activity_details">DetailsActivity</string>
+    <string name="title_activity_payment">PaymentActivity</string>
+    <string name="title_activity_splash">BOC Android</string>
+    <string name="title_activity_payment_details">PaymentDetailsActivity</string>
+</resources>
