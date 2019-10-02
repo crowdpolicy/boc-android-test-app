@@ -24,6 +24,7 @@ import com.boc.client.model.Account;
 import com.boc.client.model.CreateSubscriptionResponse;
 import com.boc.client.model.SubscriptionView;
 import com.boc.client.model.UpdateSubscriptionResponse;
+import com.testfairy.TestFairy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements ApiConfiguration 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TestFairy.begin(this, "SDK-2JiBv9kE");
         setContentView(R.layout.activity_main);
 
         spinner = findViewById(R.id.progressbar_boc);

@@ -51,5 +51,8 @@ dependencies {
     }
     implementation files('libs/java-retrofit-api-client-0.0.1.jar')
 
+    // Testfairy SDK
+    implementation 'testfairy:testfairy-android-sdk:1.+@aar'
+
 
 }
