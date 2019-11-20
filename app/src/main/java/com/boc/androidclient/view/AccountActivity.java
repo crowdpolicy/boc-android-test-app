@@ -1,8 +1,11 @@
 package com.boc.androidclient.view;
 
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +20,8 @@ import com.boc.androidclient.R;
 import com.boc.androidclient.network.BocAccountsService;
 import com.boc.androidclient.utils.Utilities;
 import com.boc.client.model.Account;
+import com.boc.client.model.Statement;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +30,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
+
+
 
 /**
  * Display list of available accounts (retrieved from Subscription ID) after user clicks on 'Get Accounts' of Main Activity
@@ -43,7 +50,7 @@ public class AccountActivity extends AppCompatActivity {
     private ListView listView;
     private TextView textView;
     private ArrayList<String> accountListString;
-    private String accountDetailsRaw;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,15 +73,40 @@ public class AccountActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 // Get subscription ID from application shared preferences
-                String subId = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("SUB_ID", "NA");
-                String accId=adapter.getItem(position);
+                final String subId = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("SUB_ID", "NA");
+                final String accId=adapter.getItem(position);
 
                 // Check if network is available and call the API to get details of an account
                 if(utils.isNetworkAvailable(getApplicationContext())){
                     // Set loading spinner to active until we get response
                     spinner.setVisibility(View.VISIBLE);
-                    getAccountDetails(accId, subId);
+                    //TODO
+                    //getAccountDetails(accId, subId);
 
+                    AlertDialog.Builder builder1 = new AlertDialog.Builder(AccountActivity.this);
+                    builder1.setMessage("Select action");
+                    builder1.setCancelable(true);
+
+                    builder1.setPositiveButton(
+                            "Statements",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                    getAccountStatement(accId,subId, "01/01/2016", "31/12/2018", 10);
+                                }
+                            });
+
+                    builder1.setNegativeButton(
+                            "Details",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                    getAccountDetails(accId, subId);
+                                }
+                            });
+
+                    AlertDialog alert11 = builder1.create();
+                    alert11.show();
                 }
                 else{
                     Toast.makeText(getApplicationContext(),
@@ -101,16 +133,52 @@ public class AccountActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(List<Account> response) {
                                 // For debugging purposes
-                                Log.e(LOGTAG, " ------------- Account success ---------------");
                                 Log.e(LOGTAG, response.toString());
 
                                 // Set loading spinner to invisible since we got success
                                 spinner.setVisibility(View.GONE);
-                                // Convert API response to ArrayList<String> to set the next activity view
-                                accountDetailsRaw = response.toString();
+
                                 // Start AccounDetailsActivity
                                 Intent intent = new Intent(getApplicationContext(), AccountDetailsActivity.class);
-                                intent.putStringArrayListExtra("details", responseToArrayList(response));
+                                intent.putStringArrayListExtra("details", accountResponseToArrayList(response));
+                                startActivity(intent);
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                spinner.setVisibility(View.GONE);
+                                Toast.makeText(getApplicationContext(), "An error has occured. please check your connection", Toast.LENGTH_LONG).show();
+                                Log.e(LOGTAG, "onError: " + e.getMessage());
+                            }
+                        }));
+    }
+
+
+    /**
+     * BOC API call to get Account Statements (RxJava call)
+     */
+    private void getAccountStatement(final String accId, final String subId, final String startDate, final String endDate, final int maxCount) {
+        disposable.add(
+                mAccountsService
+                        // Async call to BOC Java SDK library
+                        .getAccountStatement(accId, subId, startDate, endDate, maxCount)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<Statement>() {
+                            @Override
+                            public void onSuccess(Statement response) {
+                                // For debugging purposes
+                                Log.e(LOGTAG, response.toString());
+
+                                // Set loading spinner to invisible since we got success
+                                spinner.setVisibility(View.GONE);
+
+                                // Convert Array of transactions to String in order to pass to next activity
+                                String arrayAsString = new Gson().toJson(response.getTransaction());
+
+                                // Start AccounDetailsActivity
+                                Intent intent = new Intent(getApplicationContext(), StatementActivity.class);
+                                intent.putExtra("transactionArray", arrayAsString);
                                 startActivity(intent);
                             }
 
@@ -129,7 +197,7 @@ public class AccountActivity extends AppCompatActivity {
      * @param response
      * @return
      */
-    private ArrayList<String> responseToArrayList(List<Account> response){
+    private ArrayList<String> accountResponseToArrayList(List<Account> response){
         ArrayList<String> responseArray = new ArrayList<>();
         responseArray.add(response.get(0).getBankId());
         responseArray.add(response.get(0).getAccountId());
@@ -147,6 +215,7 @@ public class AccountActivity extends AppCompatActivity {
         responseArray.add(response.get(0).getBalances().get(1).getAmount().toString());
         return responseArray;
     }
+
 
 
 

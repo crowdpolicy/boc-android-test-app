@@ -10,6 +10,7 @@ import com.boc.client.model.UpdateSubscriptionRequest;
 import com.boc.client.model.UpdateSubscriptionResponse;
 import com.boc.client.service.SubscriptionService;
 
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -43,6 +44,7 @@ public class BocSubscriptionService {
                 String appName = ApiConfiguration.APP_NAME;
                 String originUserId = ApiConfiguration.ORIGIN_USER_ID;
                 String tppId = ApiConfiguration.TPP_ID;
+
 
                 // TODO: Mock data, provide option for user input
                 PaymentView paymentView = new PaymentView();

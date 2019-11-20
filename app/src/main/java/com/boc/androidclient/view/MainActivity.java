@@ -22,6 +22,7 @@ import com.boc.client.api.ApiConfiguration;
 import com.boc.client.model.AccessTokenResponse;
 import com.boc.client.model.Account;
 import com.boc.client.model.CreateSubscriptionResponse;
+import com.boc.client.model.Statement;
 import com.boc.client.model.SubscriptionView;
 import com.boc.client.model.UpdateSubscriptionResponse;
 import com.testfairy.TestFairy;
@@ -38,7 +39,7 @@ import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 
-public class MainActivity extends AppCompatActivity implements ApiConfiguration {
+public class MainActivity extends AppCompatActivity {
 
     private final String LOGTAG = this.getClass().getName();
     private Button btnCreateSub;
@@ -62,11 +63,34 @@ public class MainActivity extends AppCompatActivity implements ApiConfiguration 
     private String authCode;
     private String token2;
 
+
+    /**
+     * Modify your API credentials here (i.e ClientID / Client Secret)
+     *
+     */
+    private void initApiConfig(){
+        ApiConfiguration.CLIENT_ID = "7c7bcb8f-7930-495d-adc2-e69f1afb07da";
+        ApiConfiguration.CLIENT_SECRET = "pS0qV2iG4pA7dM6aE3xG4xX1gJ3rK8eX1hU3jY7uH3hP3wS2aO";
+
+        ApiConfiguration.APP_NAME = "myapp";
+
+        ApiConfiguration.AMOUNT = 999999999;
+        ApiConfiguration.LIMIT = 999999999;
+        ApiConfiguration.CURRENCY = "EUR";
+
+        ApiConfiguration.BALANCE = true;
+        ApiConfiguration.TRANASACTION_HISTORY = true;
+        ApiConfiguration.DETAILS = true;
+        ApiConfiguration.CHECK_FUNDS_AVAILABILITY = true;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TestFairy.begin(this, "SDK-2JiBv9kE");
+        //TestFairy.begin(this, "SDK-2JiBv9kE");
         setContentView(R.layout.activity_main);
+
+        initApiConfig();
 
         spinner = findViewById(R.id.progressbar_boc);
         spinner.setVisibility(View.GONE);
@@ -146,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements ApiConfiguration 
             }
         });
 
+        //TODO
 
         btnAccounts.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,6 +190,7 @@ public class MainActivity extends AppCompatActivity implements ApiConfiguration 
             }
         });
 
+
     }
 
     @Override
@@ -172,6 +198,7 @@ public class MainActivity extends AppCompatActivity implements ApiConfiguration 
         super.attachBaseContext(base);
         MultiDex.install(this);
     }
+
 
     /**
      * Patch the subscription ID with the authorization code retrieved from the user's login to 1bank environment by calling the BOC APIs (RxJava call).
@@ -207,7 +234,6 @@ public class MainActivity extends AppCompatActivity implements ApiConfiguration 
                         .subscribeWith(new DisposableSingleObserver<UpdateSubscriptionResponse>() {
                             @Override
                             public void onSuccess(UpdateSubscriptionResponse response) {
-                                Log.e(LOGTAG, " ------------- Patch Subscription success ---------------");
                                 Log.e(LOGTAG,  response.toString());
 
                                 // Change flags and disable/enable buttons to make the user flow more straightforward
@@ -245,7 +271,6 @@ public class MainActivity extends AppCompatActivity implements ApiConfiguration 
                         .subscribeWith(new DisposableSingleObserver<CreateSubscriptionResponse>() {
                             @Override
                             public void onSuccess(CreateSubscriptionResponse response) {
-                                Log.e(LOGTAG, " ------------- Create Subscription success ---------------");
                                 Log.e(LOGTAG,  response.getSubscriptionId());
                                 // Storing user API Key in preferences
                                 Toast.makeText(getApplicationContext(),
@@ -285,7 +310,6 @@ public class MainActivity extends AppCompatActivity implements ApiConfiguration 
                         .subscribeWith(new DisposableSingleObserver<List<Account>>() {
                             @Override
                             public void onSuccess(List<Account> response) {
-                                Log.e(LOGTAG, " ------------- Payment success ---------------");
                                 Log.e(LOGTAG, response.toString());
                                 spinner.setVisibility(View.GONE);
 
@@ -310,6 +334,7 @@ public class MainActivity extends AppCompatActivity implements ApiConfiguration 
                             }
                         }));
     }
+
 
     private void enableButton(Button btn){
         btn.setEnabled(true);

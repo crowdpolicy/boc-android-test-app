@@ -6,4 +6,5 @@
     <string name="title_activity_payment">PaymentActivity</string>
     <string name="title_activity_splash">BOC Android</string>
     <string name="title_activity_payment_details">PaymentDetailsActivity</string>
+    <string name="title_activity_statement">StatementActivity</string>
 </resources>

@@ -97,7 +97,7 @@ public class BocAccountsService {
      * @param subId
      * @return
      */
-    public Single<Statement> getAccountStatement(final String accId, final String subId){
+    public Single<Statement> getAccountStatement(final String accId, final String subId, final String startDate, final String endDate, final int maxCount){
         return Single.fromCallable(new Callable<Statement>() {
             @Override
             public Statement call() throws Exception {
@@ -105,7 +105,7 @@ public class BocAccountsService {
                 String journeyId = ApiConfiguration.JOURNEY_ID;
                 String originUserId = ApiConfiguration.ORIGIN_USER_ID;
 
-                Statement response = accService.getAccountStatement(accId, subId, "","", new BigDecimal(1), journeyId,originUserId,tppId,null,null,null,null,null,null,null);
+                Statement response = accService.getAccountStatement(accId, subId, startDate, endDate, new BigDecimal(maxCount), journeyId,originUserId,tppId,null,null,null,null,null,null,null);
                 return response;
             }
         });
