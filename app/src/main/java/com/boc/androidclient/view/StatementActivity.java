@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.boc.androidclient.R;
@@ -14,6 +15,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,6 +38,9 @@ public class StatementActivity extends AppCompatActivity {
     private TextView transValuedate;
     private TextView transType;
 
+    private ListView listView;
+    private static CustomListAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +49,19 @@ public class StatementActivity extends AppCompatActivity {
 
         String statementAsString = getIntent().getStringExtra("transactionArray");
         Type collectionType = new TypeToken<List<Transaction>>(){}.getType();
-        List<Transaction> list = new Gson()
+        ArrayList<Transaction> list = new Gson()
                 .fromJson( statementAsString , collectionType);
 
+
+        listView=(ListView)findViewById(R.id.list);
+
+        adapter= new CustomListAdapter(list,getApplicationContext());
+
+        listView.setAdapter(adapter);
+
+
         //TODO recyclerview, only displays the first transaction
+        /*
         transId = findViewById(R.id.trans_id);
         transId.setText("TransactionID: "+ list.get(0).getId());
 
@@ -71,6 +85,7 @@ public class StatementActivity extends AppCompatActivity {
 
         transType = findViewById(R.id.trans_type);
         transType.setText("Type: "+list.get(0).getTransactionType());
+        //*/
 
     }
 
