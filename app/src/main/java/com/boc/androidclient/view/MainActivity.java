@@ -49,9 +49,9 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar spinner;
 
     private CompositeDisposable disposable = new CompositeDisposable();
-    private BocSubscriptionService mSubscriptionService = new BocSubscriptionService();
-    private BocAuthorizationService mAuthorizationSerivce = new BocAuthorizationService();
-    private BocAccountsService mAccountsService = new BocAccountsService();
+    private BocSubscriptionService mSubscriptionService;
+    private BocAuthorizationService mAuthorizationSerivce;
+    private BocAccountsService mAccountsService;
     private Utilities utils = new Utilities();
 
 
@@ -92,6 +92,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initApiConfig();
+
+        mSubscriptionService = new BocSubscriptionService();
+        mAuthorizationSerivce = new BocAuthorizationService();
+        mAccountsService = new BocAccountsService();
 
         spinner = findViewById(R.id.progressbar_boc);
         spinner.setVisibility(View.GONE);
