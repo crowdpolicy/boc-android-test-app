@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     private void initApiConfig(){
         ApiConfiguration.CLIENT_ID = "7c7bcb8f-7930-495d-adc2-e69f1afb07da";
         ApiConfiguration.CLIENT_SECRET = "pS0qV2iG4pA7dM6aE3xG4xX1gJ3rK8eX1hU3jY7uH3hP3wS2aO";
+        ApiConfiguration.BOC_REDIRECT_URL = "https://bocandroid.com/callback";
 
         ApiConfiguration.APP_NAME = "myapp";
 
@@ -282,7 +283,11 @@ public class MainActivity extends AppCompatActivity {
                                 PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("SUB_ID", response.getSubscriptionId()).apply();
 
                                 // Open the browser and direct the user to the 1bank environment for login
-                                url = "https://sandbox-apis.bankofcyprus.com/df-boc-org-sb/sb/psd2/oauth2/authorize?response_type=code&redirect_uri=https://bocandroid.com/callback&scope=UserOAuth2Security&client_id=7c7bcb8f-7930-495d-adc2-e69f1afb07da&subscriptionid="+subscriptionId;
+                                url = "https://sandbox-apis.bankofcyprus.com/df-boc-org-sb/sb/psd2/oauth2/authorize?response_type=code&"+
+                                        "redirect_uri="+ ApiConfiguration.BOC_REDIRECT_URL +
+                                        "&scope=UserOAuth2Security&"+
+                                        "client_id="+ ApiConfiguration.CLIENT_ID+
+                                        "&subscriptionid="+subscriptionId;
                                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                                 startActivity(browserIntent);
                             }
